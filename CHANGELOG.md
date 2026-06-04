@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `locmaf` packaging value and `locmafVersion` track field from LOCMAF
+  (draft-einarsson-moq-locmaf). `locmafVersion` is required on `locmaf` tracks
+  and must currently be `"0.2"`
+
 ### Fixed
 
 - `bitrate` is no longer required for non-audio/video media tracks (e.g.

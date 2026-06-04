@@ -8,7 +8,10 @@
 
 A validator for **MSF** ([draft-ietf-moq-msf](https://datatracker.ietf.org/doc/draft-ietf-moq-msf/))
 and **CMSF** ([draft-ietf-moq-cmsf](https://datatracker.ietf.org/doc/draft-ietf-moq-cmsf/))
-catalog documents.
+catalog documents. The `locmaf` packaging value and the `locmafVersion` track
+field from **LOCMAF**
+([draft-einarsson-moq-locmaf](https://datatracker.ietf.org/doc/draft-einarsson-moq-locmaf/))
+are recognized as well.
 
 Feed it a catalog JSON document and it returns a report describing exactly which
 parts are not compliant, each finding pointing at the offending path and the
@@ -103,7 +106,7 @@ The schema enforces everything that is naturally structural:
 - **Value types and ranges** — `bitrate` is a positive integer, `framerate` a
   positive number, `maxGrpSapStartingType` is `0..3`, KIDs/system IDs are UUIDs,
   ...
-- **Allowed enum values** — `packaging ∈ {loc, cmaf, mediatimeline,
+- **Allowed enum values** — `packaging ∈ {loc, cmaf, locmaf, mediatimeline,
   eventtimeline, moqlog, moqmetrics}`, content-protection `scheme ∈ {cenc,
   cbcs}`, ...
 - **Conditional requirements**, the interesting part:

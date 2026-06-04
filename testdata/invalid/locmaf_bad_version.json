@@ -1,0 +1,26 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "video_locmaf",
+      "packaging": "locmaf",
+      "isLive": true,
+      "role": "video",
+      "codec": "avc1.4D401F",
+      "bitrate": 375888,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "name": "audio_locmaf_wrongver",
+      "packaging": "locmaf",
+      "locmafVersion": "0.3",
+      "isLive": true,
+      "role": "audio",
+      "codec": "mp4a.40.2",
+      "samplerate": 48000,
+      "channelConfig": "2",
+      "bitrate": 96000
+    }
+  ]
+}

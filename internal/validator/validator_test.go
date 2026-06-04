@@ -68,6 +68,7 @@ func TestInvalidFixtures(t *testing.T) {
 		"trackduration_when_live.json":  {"MSF 5.2.35"},
 		"duplicate_name.json":           {"MSF 5.2.3"},
 		"delta_with_version.json":       {"MSF 5.3"},
+		"locmaf_bad_version.json":       {"LOCMAF"},
 	}
 	e := newEngine(t)
 	for name, wantRules := range cases {
@@ -83,6 +84,16 @@ func TestInvalidFixtures(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestLOCMAFCatalog(t *testing.T) {
+	// A real catalog mixing cmaf and locmaf tracks (with locmafVersion) must
+	// validate clean.
+	e := newEngine(t)
+	r := validateFile(t, e, "../../testdata/locmaf/catalog")
+	if !r.Valid {
+		t.Errorf("expected LOCMAF catalog to be compliant; got:\n%s", r.Text())
 	}
 }
 

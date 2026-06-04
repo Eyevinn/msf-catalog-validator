@@ -7,6 +7,14 @@
 // A single schema therefore covers both formats; whether a catalog is "MSF"
 // or "CMSF" follows from the packaging values and DRM fields it actually uses.
 //
+// The schema also accepts the "locmaf" packaging value and the locmafVersion
+// track field from [LOCMAF].
+//
+// References:
+//   [MSF]    draft-ietf-moq-msf-01    - MOQT Streaming Format
+//   [CMSF]   draft-ietf-moq-cmsf-01   - CMAF-based MOQT Streaming Format
+//   [LOCMAF] draft-einarsson-moq-locmaf - Low Overhead CMAF for Media over QUIC
+//
 // Design notes
 //   - Structs are *open* (`...`): the spec allows producers to add custom,
 //     namespaced fields (e.g. "com.example-tier") and requires parsers to
@@ -127,8 +135,10 @@ import "list"
 // Tracks
 // -----------------------------------------------------------------------------
 
-// Section 5.2.4 - allowed packaging values (CMSF adds "cmaf").
-#Packaging: "loc" | "cmaf" | "mediatimeline" | "eventtimeline" | "moqlog" | "moqmetrics"
+// Section 5.2.4 - allowed packaging values. CMSF adds "cmaf"; "locmaf" is the
+// Low Overhead CMAF packaging defined in [LOCMAF] (draft-einarsson-moq-locmaf,
+// "Low Overhead CMAF for Media over QUIC").
+#Packaging: "loc" | "cmaf" | "locmaf" | "mediatimeline" | "eventtimeline" | "moqlog" | "moqmetrics"
 
 // #Track is a declared track in an independent catalog or an "add" delta op.
 // packaging is required here (Section 5.2.4).
@@ -149,6 +159,12 @@ import "list"
 	// Section 5.2.4 - packaging. Optional at this level; #Track makes it
 	// required for declared tracks.
 	packaging?: #Packaging
+
+	// LOCMAF wire-format version, a track-level field defined by [LOCMAF]
+	// (draft-einarsson-moq-locmaf). Required for "locmaf" packaging and, for
+	// now, fixed to "0.2" (the only version this validator knows); see the
+	// conditional rule below.
+	locmafVersion?: string
 
 	// Section 5.2.6 - track role. Optional; known roles are documented below
 	// but custom roles are permitted, so the type stays an open string.
@@ -263,14 +279,20 @@ import "list"
 
 	// --- conditional requirements ----------------------------------------------
 
-	// LOC/CMAF media tracks MUST carry isLive and codec. bitrate is required
-	// only for audio and video tracks (Section 5.2.22), which is enforced by the
-	// role-based rules below, so it is not required here (a subtitle/caption
-	// track legitimately has no bitrate).
+	// LOC/CMAF/LOCMAF media tracks MUST carry isLive and codec. bitrate is
+	// required only for audio and video tracks (Section 5.2.22), which is
+	// enforced by the role-based rules below, so it is not required here (a
+	// subtitle/caption track legitimately has no bitrate).
 	// (Sections 5.2.7, 5.2.18.)
-	if _pkg == "loc" || _pkg == "cmaf" {
+	if _pkg == "loc" || _pkg == "cmaf" || _pkg == "locmaf" {
 		isLive!: bool
 		codec!:  string
+	}
+
+	// LOCMAF tracks MUST carry locmafVersion; only "0.2" is supported for now.
+	// ([LOCMAF] draft-einarsson-moq-locmaf.)
+	if _pkg == "locmaf" {
+		locmafVersion!: "0.2"
 	}
 
 	// Audio tracks MUST carry codec, samplerate, channelConfig and bitrate.
