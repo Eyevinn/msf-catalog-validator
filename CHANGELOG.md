@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `bitrate` is no longer required for non-audio/video media tracks (e.g.
+  subtitle/caption tracks in cmaf packaging); per MSF Section 5.2.22 it is
+  required only for audio and video
+
 ## [0.1.0] - 2026-06-04
 
 ### Added

@@ -1,0 +1,23 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "video",
+      "packaging": "cmaf",
+      "isLive": true,
+      "role": "video",
+      "codec": "avc1.640028",
+      "bitrate": 5000000,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "name": "subs_en",
+      "packaging": "cmaf",
+      "isLive": true,
+      "role": "subtitle",
+      "codec": "wvtt",
+      "lang": "en"
+    }
+  ]
+}
