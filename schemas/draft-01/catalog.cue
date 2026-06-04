@@ -206,10 +206,10 @@ import "list"
 	// Section 5.2.18 - codec string. Required for media tracks (below).
 	codec?: string
 
-	// Section 5.2.19 - mime type. The field table spells it "mimeType" while
-	// the examples use "mimetype"; accept either spelling.
+	// Section 5.2.19 - mime type. The field table spells it "mimeType"; the
+	// lower-case "mimetype" used by some early examples is not accepted (it is
+	// flagged as a probable typo by the Go field lint).
 	mimeType?: string
-	mimetype?: string
 
 	// Section 5.2.20 - frame rate (may be fractional, e.g. 29.97).
 	framerate?: number & >0

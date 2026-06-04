@@ -127,19 +127,25 @@ func TestFieldTypoWarning(t *testing.T) {
 func TestVersionDispatch(t *testing.T) {
 	e := newEngine(t)
 
-	t.Run("alias 1 -> draft-01 with info", func(t *testing.T) {
+	t.Run("legacy version 1 is now rejected", func(t *testing.T) {
+		// The examples used to carry "version": "1"; per Section 5.1.1 the
+		// normative form is "draft-XX", so "1" is no longer accepted.
 		r, _ := e.Validate([]byte(`{"version":"1","tracks":[]}`), "")
+		if r.Valid {
+			t.Errorf("expected legacy version \"1\" to be rejected")
+		}
+		if !errorRules(r)["MSF 5.1.1"] {
+			t.Errorf("expected MSF 5.1.1 error for legacy version; got:\n%s", r.Text())
+		}
+	})
+
+	t.Run("draft-01 is accepted", func(t *testing.T) {
+		r, _ := e.Validate([]byte(`{"version":"draft-01","tracks":[]}`), "")
 		if r.SchemaVersion != defaultSchemaVersion {
 			t.Errorf("schemaVersion = %q, want %s", r.SchemaVersion, defaultSchemaVersion)
 		}
-		var info bool
-		for _, f := range r.Findings {
-			if f.Severity == SeverityInfo && f.Path == fieldVersion {
-				info = true
-			}
-		}
-		if !info {
-			t.Errorf("expected an info finding about the version alias")
+		if !r.Valid {
+			t.Errorf("expected draft-01 empty catalog to be valid; got:\n%s", r.Text())
 		}
 	})
 

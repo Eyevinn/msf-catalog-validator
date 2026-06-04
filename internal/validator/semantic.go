@@ -87,7 +87,7 @@ var trackFields = map[string]bool{
 	"eventType": true, "isLive": true, "targetLatency": true, "buffers": true,
 	"label": true, "renderGroup": true, "altGroup": true, "initRef": true,
 	"depends": true, "temporalId": true, "spatialId": true, "codec": true,
-	"mimeType": true, "mimetype": true, "framerate": true, "timescale": true,
+	"mimeType": true, "framerate": true, "timescale": true,
 	"bitrate": true, "avgBitrate": true, "maxGopDuration": true,
 	"maxGroupDuration": true, "width": true, "height": true, "samplerate": true,
 	"channelConfig": true, "displayWidth": true, "displayHeight": true,

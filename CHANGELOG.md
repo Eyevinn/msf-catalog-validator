@@ -19,6 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   prefix (e.g. /msf-catalog-validator); adds a systemd unit and a `build-linux`
   Makefile target for deployment
 
+### Changed
+
+- Stricter validation that follows the draft-01 field *definitions* rather than
+  the (inconsistent) examples; see [moq-wg/msf#177](https://github.com/moq-wg/msf/pull/177):
+  - `version` must use the `"draft-XX"` convention (only `"draft-01"`); the
+    legacy `"1"` is rejected instead of being accepted as an alias
+  - the mime-type field is `mimeType`; lower-case `mimetype` is flagged as a
+    probable typo rather than accepted
+
 ### Fixed
 
 - `bitrate` is no longer required for non-audio/video media tracks (e.g.
