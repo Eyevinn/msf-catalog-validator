@@ -39,6 +39,11 @@ type schemaSet struct {
 	root    cue.Value // #Catalog  (independent catalog)
 	delta   cue.Value // #DeltaCatalog
 	track   cue.Value // #Track    (used for per-track validation)
+	// enumValues maps an enum field's leaf name (e.g. "packaging", "op") to the
+	// list of values the schema permits, so a rejected value can be reported
+	// alongside the allowed set. Populated from the compiled schema, so it never
+	// drifts from the actual constraints.
+	enumValues map[string][]string
 }
 
 // defaultSchemaVersion is used for delta updates, which carry no version field
@@ -92,7 +97,73 @@ func compileSchema(ctx *cue.Context, version, src string) (*schemaSet, error) {
 			return nil, fmt.Errorf("looking up %s: %w", name, err)
 		}
 	}
+	ss.enumValues = buildEnumValues(ctx, v)
 	return ss, nil
+}
+
+// buildEnumValues extracts, from the compiled schema, the permitted values of
+// the closed-disjunction fields whose violation otherwise produces a bare
+// "value is not permitted" error. Reading them from the schema keeps the
+// reported lists in sync with the constraints.
+func buildEnumValues(ctx *cue.Context, root cue.Value) map[string][]string {
+	m := map[string][]string{}
+	add := func(leaf string, v cue.Value) {
+		if vals := disjunctStrings(v); len(vals) > 0 {
+			m[leaf] = vals
+		}
+	}
+
+	// packaging is a named top-level disjunction (#Packaging).
+	add("packaging", root.LookupPath(cue.ParsePath("#Packaging")))
+	// op, scheme and type are inline disjunctions inside closed definitions.
+	add("op", fieldByName(root.LookupPath(cue.ParsePath("#DeltaOp")), "op"))
+	add("scheme", fieldByName(root.LookupPath(cue.ParsePath("#ContentProtection")), "scheme"))
+	add("type", fieldByName(root.LookupPath(cue.ParsePath("#InitData")), "type"))
+	// locmafVersion is required only under "locmaf" packaging; fire that
+	// conditional by unifying #Track with a minimal locmaf stub.
+	stub := ctx.CompileString(`{name: "_", packaging: "locmaf", isLive: true, codec: "_"}`)
+	track := root.LookupPath(cue.ParsePath("#Track")).Unify(stub).Eval()
+	add("locmafVersion", fieldByName(track, "locmafVersion"))
+
+	return m
+}
+
+// disjunctStrings returns the concrete string members of v: the operands of a
+// string disjunction (a|b|c), or the single value of a concrete string (such as
+// type: "inline" or locmafVersion: "0.2"). It returns nil for anything else.
+func disjunctStrings(v cue.Value) []string {
+	if !v.Exists() {
+		return nil
+	}
+	if op, args := v.Expr(); op == cue.OrOp {
+		var out []string
+		for _, a := range args {
+			out = append(out, disjunctStrings(a)...)
+		}
+		return out
+	}
+	if s, err := v.String(); err == nil && v.IsConcrete() {
+		return []string{s}
+	}
+	return nil
+}
+
+// fieldByName returns the named field of struct value v, matching regardless of
+// the optional ("?") or required ("!") marker. It returns a non-existent value
+// when v is not a struct or has no such field.
+func fieldByName(v cue.Value, name string) cue.Value {
+	iter, err := v.Fields(cue.All())
+	if err != nil {
+		return cue.Value{}
+	}
+	for iter.Next() {
+		// Selector.String() keeps the "!"/"?" marker and never panics on hidden
+		// or non-string labels, unlike Unquoted().
+		if strings.TrimRight(iter.Selector().String(), "!?") == name {
+			return iter.Value()
+		}
+	}
+	return cue.Value{}
 }
 
 // Validate parses and validates a single catalog document. The returned Report
@@ -207,7 +278,7 @@ func (e *Engine) runCUE(report *Report, ss *schemaSet, dataVal cue.Value, isDelt
 
 	unified := schemaVal.Unify(dataVal)
 	if err := unified.Validate(cue.Concrete(true)); err != nil {
-		e.addCUEErrors(report, "", err)
+		e.addCUEErrors(report, ss, "", err)
 	}
 
 	if isDelta {
@@ -222,20 +293,20 @@ func (e *Engine) runCUE(report *Report, ss *schemaSet, dataVal cue.Value, isDelt
 		if !list.Exists() {
 			continue
 		}
-		e.validateTrackList(report, ss.track, list, field)
+		e.validateTrackList(report, ss, list, field)
 	}
 }
 
-func (e *Engine) validateTrackList(report *Report, trackSchema, list cue.Value, prefix string) {
+func (e *Engine) validateTrackList(report *Report, ss *schemaSet, list cue.Value, prefix string) {
 	iter, err := list.List()
 	if err != nil {
 		return
 	}
 	for i := 0; iter.Next(); i++ {
 		elem := iter.Value()
-		unified := trackSchema.Unify(elem)
+		unified := ss.track.Unify(elem)
 		if verr := unified.Validate(cue.Concrete(true)); verr != nil {
-			e.addCUEErrors(report, fmt.Sprintf("%s[%d]", prefix, i), verr)
+			e.addCUEErrors(report, ss, fmt.Sprintf("%s[%d]", prefix, i), verr)
 		}
 	}
 }
@@ -255,14 +326,14 @@ func (e *Engine) validateDeltaTracks(report *Report, ss *schemaSet, dataVal cue.
 		}
 		tracks := op.LookupPath(cue.ParsePath("tracks"))
 		if tracks.Exists() {
-			e.validateTrackList(report, ss.track, tracks, fmt.Sprintf("deltaUpdate[%d].tracks", i))
+			e.validateTrackList(report, ss, tracks, fmt.Sprintf("deltaUpdate[%d].tracks", i))
 		}
 	}
 }
 
 // addCUEErrors converts CUE validation errors into findings, collapsing the
 // noisy multi-line "empty disjunction" output that enum mismatches produce.
-func (e *Engine) addCUEErrors(report *Report, pathPrefix string, err error) {
+func (e *Engine) addCUEErrors(report *Report, ss *schemaSet, pathPrefix string, err error) {
 	for _, ce := range cueerrors.Errors(err) {
 		path := joinPath(pathPrefix, ce.Path())
 		rule := ruleForPath(path)
@@ -279,11 +350,24 @@ func (e *Engine) addCUEErrors(report *Report, pathPrefix string, err error) {
 		msg, enum := cueMessage(ce)
 		if enum {
 			report.add(Finding{Severity: SeverityError, Path: path, Rule: rule,
-				Message: "value is not permitted here (does not match any allowed value for this field)"})
+				Message: enumMessage(ss.enumValues[leafField(path)])})
 			continue
 		}
 		report.add(Finding{Severity: SeverityError, Path: path, Rule: rule, Message: msg})
 	}
+}
+
+// enumMessage describes an enum violation. When the permitted values are known
+// it lists them; otherwise it falls back to a generic message.
+func enumMessage(allowed []string) string {
+	if len(allowed) == 0 {
+		return "value is not permitted here (does not match any allowed value for this field)"
+	}
+	quoted := make([]string, len(allowed))
+	for i, v := range allowed {
+		quoted[i] = strconv.Quote(v)
+	}
+	return "value is not permitted here; allowed values: " + strings.Join(quoted, ", ")
 }
 
 // referenceMessage returns a tailored message for catalog reference fields whose

@@ -87,6 +87,49 @@ func TestInvalidFixtures(t *testing.T) {
 	}
 }
 
+// findingFor returns the first error finding at the given path.
+func findingFor(r *Report, path string) (Finding, bool) {
+	for _, f := range r.Findings {
+		if f.Severity == SeverityError && f.Path == path {
+			return f, true
+		}
+	}
+	return Finding{}, false
+}
+
+// TestEnumMessagesListAllowedValues checks that a value rejected by a
+// closed-disjunction field is reported together with the values the schema
+// permits, rather than a bare "not permitted" message.
+func TestEnumMessagesListAllowedValues(t *testing.T) {
+	e := newEngine(t)
+	const lead = "allowed values:"
+	cases := []struct {
+		file, path string
+		want       []string // substrings that must all appear in the message
+	}{
+		{"../../examples/invalid.json", "tracks[1].packaging",
+			[]string{lead, `"loc"`, `"cmaf"`, `"locmaf"`}},
+		{"../../testdata/invalid/locmaf_bad_version.json", "tracks[1].locmafVersion",
+			[]string{lead, `"0.2"`}},
+		{"../../testdata/invalid/delta_with_version.json", "deltaUpdate[0].op",
+			[]string{lead, `"add"`, `"remove"`, `"clone"`}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.path, func(t *testing.T) {
+			r := validateFile(t, e, tc.file)
+			f, ok := findingFor(r, tc.path)
+			if !ok {
+				t.Fatalf("no error finding at %s; got:\n%s", tc.path, r.Text())
+			}
+			for _, want := range tc.want {
+				if !strings.Contains(f.Message, want) {
+					t.Errorf("message %q missing %q", f.Message, want)
+				}
+			}
+		})
+	}
+}
+
 func TestLOCMAFCatalog(t *testing.T) {
 	// A real catalog mixing cmaf and locmaf tracks (with locmafVersion) must
 	// validate clean.
