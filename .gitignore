@@ -17,6 +17,13 @@ coverage.txt
 /out/
 /msf-catalog-validator
 
+# TLS material and local secrets — never commit deploy certs/keys
+*.pem
+*.key
+*.crt
+*.p12
+*.env
+
 # Python virtual environment for pre-commit
 venv/
 
