@@ -1,0 +1,27 @@
+[Unit]
+Description=MSF/CMSF catalog validator (web UI)
+After=network.target
+
+[Service]
+Type=simple
+# Bind to localhost only; Caddy reverse-proxies /msf-catalog-validator to it.
+ExecStart=/usr/local/bin/msf-catalog-validator -serve 127.0.0.1:8088
+Restart=on-failure
+RestartSec=5
+User=moqlivemock
+Group=moqlivemock
+
+# Hardening: the validator only reads its embedded data and serves HTTP.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+
+[Install]
+WantedBy=multi-user.target

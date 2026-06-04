@@ -67,7 +67,8 @@ out/msf-catalog-validator -version
 
 # Browser UI: paste or upload a catalog and see the report
 out/msf-catalog-validator -serve :8080
-#   GET  /            upload/paste form
+#   GET  /            upload/paste form, one-click example catalogs, the
+#                     draft-01 CUE schema, and JSON/CUE syntax highlighting
 #   POST /validate    multipart upload (field "catalog") or raw JSON body;
 #                     send "Accept: application/json" for a JSON report
 ```
@@ -192,6 +193,7 @@ A couple of spec ambiguities are handled deliberately:
 cmd/msf-catalog-validator/   CLI (run() is testable) + HTTP serve mode
 internal/validator/          engine, report, CUE + semantic checks, tests
 schemas/                     embedded CUE schemas (schemas.go + draft-01/)
+examples/                    curated catalogs shown in the web UI (embedded)
 testdata/valid/              compliant catalogs (must validate clean)
 testdata/invalid/            non-compliant catalogs (each targets a rule)
 ```

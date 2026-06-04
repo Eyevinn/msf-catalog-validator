@@ -16,6 +16,11 @@ prepare:
 build: prepare
 	go build -ldflags "$(LDFLAGS)" -o $(BINARY) ./cmd/msf-catalog-validator
 
+# Cross-compile for the deployment VM (linux/amd64).
+.PHONY: build-linux
+build-linux: prepare
+	GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o out/msf-catalog-validator-linux-amd64 ./cmd/msf-catalog-validator
+
 .PHONY: test
 test: prepare
 	go test ./...

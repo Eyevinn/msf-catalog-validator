@@ -1,0 +1,22 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "audio",
+      "packaging": "loc",
+      "isLive": true,
+      "role": "audio",
+      "codec": "opus",
+      "channelConfig": "2",
+      "bitrate": 32000
+    },
+    {
+      "name": "video",
+      "packaging": "mp4",
+      "isLive": true,
+      "role": "video",
+      "codec": "avc1.640028",
+      "bitrate": 1500000
+    }
+  ]
+}

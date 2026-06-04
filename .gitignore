@@ -24,6 +24,9 @@ venv/
 go.work
 go.work.sum
 
+# Playwright MCP scratch output
+.playwright-mcp/
+
 # Dependency directories (remove the comment below to include it)
 vendor/
 
