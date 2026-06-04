@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `locmaf` packaging value and `locmafVersion` track field from LOCMAF
   (draft-einarsson-moq-locmaf). `locmafVersion` is required on `locmaf` tracks
   and must currently be `"0.2"`
+- Web UI: one-click example catalogs (with a link to the full testdata on
+  GitHub for more), a collapsible view of the draft-01 CUE schema, links to the
+  MSF and CMSF specifications, and JSON/CUE syntax highlighting via Prism.js
+- Web UI uses relative URLs so it can be hosted behind a reverse-proxy path
+  prefix (e.g. /msf-catalog-validator); adds a systemd unit and a `build-linux`
+  Makefile target for deployment
 
 ### Fixed
 
