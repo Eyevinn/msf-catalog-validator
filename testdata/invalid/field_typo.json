@@ -1,0 +1,16 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "audio",
+      "packaging": "loc",
+      "isLive": true,
+      "role": "audio",
+      "codec": "opus",
+      "sampleRate": 48000,
+      "channelConfig": "2",
+      "bitrate": 32000,
+      "com.example-tier": "premium"
+    }
+  ]
+}

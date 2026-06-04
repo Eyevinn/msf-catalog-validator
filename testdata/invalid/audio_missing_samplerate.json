@@ -1,0 +1,36 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "audio",
+      "packaging": "loc",
+      "isLive": true,
+      "role": "audio",
+      "codec": "opus",
+      "channelConfig": "2",
+      "bitrate": 32000
+    },
+    {
+      "name": "video",
+      "packaging": "bogus",
+      "isLive": true,
+      "role": "video",
+      "width": 1920,
+      "height": 1080,
+      "framerate": 30
+    },
+    {
+      "name": "loc-no-codec",
+      "packaging": "loc"
+    },
+    {
+      "name": "evt-on-video",
+      "packaging": "loc",
+      "isLive": true,
+      "role": "video",
+      "codec": "av01",
+      "bitrate": 1000,
+      "eventType": "should.not.be.here"
+    }
+  ]
+}

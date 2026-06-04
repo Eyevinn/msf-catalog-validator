@@ -1,0 +1,43 @@
+version: "2"
+linters:
+  enable:
+    - err113
+    - goconst
+    - goheader
+    - lll
+    - misspell
+    - nakedret
+    - staticcheck
+    - unconvert
+    - unparam
+  settings:
+    lll:
+      line-length: 147
+      tab-width: 4
+    staticcheck:
+      checks:
+        - all
+        - -SA5008
+        - -ST1003
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - testdata
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - testdata
+      - third_party$
+      - builtin$
+      - examples$

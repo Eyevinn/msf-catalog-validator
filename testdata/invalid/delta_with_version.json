@@ -1,0 +1,7 @@
+{
+  "version": "draft-01",
+  "tracks": [],
+  "deltaUpdate": [
+    { "op": "rename", "tracks": [{ "name": "x" }] }
+  ]
+}

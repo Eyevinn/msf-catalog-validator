@@ -1,0 +1,17 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "video",
+      "packaging": "loc",
+      "isLive": true,
+      "role": "video",
+      "targetLatency": 2000,
+      "buffers": { "target": 2000 },
+      "codec": "av01",
+      "bitrate": 1500000,
+      "width": 1920,
+      "height": 1080
+    }
+  ]
+}

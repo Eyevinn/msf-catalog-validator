@@ -1,0 +1,27 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "video",
+      "namespace": "ex.com/a",
+      "packaging": "loc",
+      "isLive": true,
+      "role": "video",
+      "codec": "av01",
+      "bitrate": 1000000,
+      "width": 640,
+      "height": 480
+    },
+    {
+      "name": "video",
+      "namespace": "ex.com/a",
+      "packaging": "loc",
+      "isLive": true,
+      "role": "video",
+      "codec": "av01",
+      "bitrate": 2000000,
+      "width": 1280,
+      "height": 720
+    }
+  ]
+}

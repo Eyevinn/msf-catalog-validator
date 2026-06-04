@@ -1,0 +1,51 @@
+{
+  "version": "draft-01",
+  "generatedAt": 1746104606044,
+  "contentProtections": [
+    {
+      "refID": "1",
+      "defaultKID": ["01234567-89ab-cdef-0123-456789abcdef"],
+      "scheme": "cbcs",
+      "drmSystem": {
+        "systemID": "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed",
+        "laURL": { "url": "https://widevine-license.example.com/proxy" },
+        "pssh": "AAAAP3Bzc2gAAAAA7e+LqXnWSs6jy..."
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "name": "video_protected",
+      "packaging": "cmaf",
+      "isLive": true,
+      "buffers": { "target": 1500 },
+      "role": "video",
+      "renderGroup": 1,
+      "altGroup": 1,
+      "initRef": "1",
+      "codec": "avc3.4D401F",
+      "framerate": 25,
+      "bitrate": 581905,
+      "width": 1280,
+      "height": 720,
+      "contentProtectionRefIDs": ["1"]
+    },
+    {
+      "name": "audio",
+      "packaging": "cmaf",
+      "isLive": true,
+      "buffers": { "target": 1500 },
+      "role": "audio",
+      "renderGroup": 1,
+      "initRef": "2",
+      "codec": "mp4a.40.5",
+      "samplerate": 48000,
+      "channelConfig": "2",
+      "bitrate": 67071
+    }
+  ],
+  "initDataList": [
+    { "id": "1", "type": "inline", "data": "AAAAHGZ0eXBjbWYy..." },
+    { "id": "2", "type": "inline", "data": "AAAAHGZ0eXBjbWYy..." }
+  ]
+}

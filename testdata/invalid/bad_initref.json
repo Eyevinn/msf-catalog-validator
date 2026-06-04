@@ -1,0 +1,19 @@
+{
+  "version": "draft-01",
+  "tracks": [
+    {
+      "name": "video",
+      "packaging": "cmaf",
+      "isLive": true,
+      "role": "video",
+      "initRef": "does-not-exist",
+      "codec": "avc1.640028",
+      "bitrate": 5000000,
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "initDataList": [
+    { "id": "init-video", "type": "inline", "data": "AAAA" }
+  ]
+}
