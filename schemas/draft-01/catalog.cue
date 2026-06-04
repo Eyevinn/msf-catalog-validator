@@ -263,12 +263,14 @@ import "list"
 
 	// --- conditional requirements ----------------------------------------------
 
-	// LOC/CMAF media tracks MUST carry isLive, codec and bitrate.
-	// (Sections 5.2.7, 5.2.18, 5.2.22.)
+	// LOC/CMAF media tracks MUST carry isLive and codec. bitrate is required
+	// only for audio and video tracks (Section 5.2.22), which is enforced by the
+	// role-based rules below, so it is not required here (a subtitle/caption
+	// track legitimately has no bitrate).
+	// (Sections 5.2.7, 5.2.18.)
 	if _pkg == "loc" || _pkg == "cmaf" {
-		isLive!:  bool
-		codec!:   string
-		bitrate!: int & >0
+		isLive!: bool
+		codec!:  string
 	}
 
 	// Audio tracks MUST carry codec, samplerate, channelConfig and bitrate.
