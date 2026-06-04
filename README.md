@@ -155,14 +155,12 @@ are de-duplicated.
 
 ## Version dispatch
 
-The schema is chosen from the document's `version` string:
+The schema is chosen from the document's `version` string, which must match a
+known schema exactly:
 
 - `"draft-01"` → the draft-01 schema.
-- `"1"` → also the draft-01 schema, with an **info** note. Every example in the
-  draft uses `"version": "1"`, while §5.1.1 recommends the `"draft-XX"`
-  convention; both are accepted.
-- Anything else → an **error** (unsupported version); validation stops because
-  no schema is known.
+- Anything else (including the legacy `"1"`) → an **error** (unsupported
+  version); validation stops because no schema is known.
 - A **delta update** carries no `version` of its own (§5.3); it is validated
   against the default (`draft-01`), noted as an info finding.
 
@@ -170,19 +168,27 @@ The schema is chosen from the document's `version` string:
 
 1. Add `schemas/draft-NN/catalog.cue`.
 2. Embed it in `schemas/schemas.go` and register it in `validator.New`
-   (`e.schemas["draft-NN"] = ...`), plus any version aliases.
+   (`e.schemas["draft-NN"] = ...`).
 3. Add fixtures under `testdata/`.
 
-## Notes on the draft
+## Strictness: definition over examples
 
-A couple of spec ambiguities are handled deliberately:
+The draft-01 documents have a few internal inconsistencies where the **examples**
+disagreed with the normative **field definitions**. This validator deliberately
+follows the *definitions* and is strict; we do not loosen the rules to admit the
+(stale) example forms. Most of these were corrected upstream in
+[moq-wg/msf#177](https://github.com/moq-wg/msf/pull/177).
 
-- §5.2.4 marks `packaging` as required, yet the delta-update *example* (§5.6.4)
-  omits it on an `add` track. The validator treats an added track as a full
-  declaration and **requires** `packaging`. Cloned tracks (`clone`) inherit from
-  their parent, so `packaging` is optional there.
-- The field table spells the mime-type field `mimeType` while the examples use
-  `mimetype`. Both spellings are accepted.
+- **Version** (§5.1.1) must use the `"draft-XX"` convention, so only
+  `"draft-01"` is accepted. The earlier examples' `"version": "1"` is rejected.
+- **Mime type** (§5.2.19) is `mimeType`. The lower-case `mimetype` some examples
+  used is flagged as a probable typo (warning), not accepted.
+- **Packaging** (§5.2.4) is required on every declared track, including tracks
+  added by a delta `add` operation (an early example omitted it). Cloned tracks
+  (`clone`) inherit from their parent, so `packaging` is optional there.
+
+Other deliberate choices:
+
 - `initDataList` SHOULD appear after `tracks` (§5.1.7). Ordering is not yet
   checked (a parsed JSON object does not preserve key order); only presence and
   id-uniqueness are.

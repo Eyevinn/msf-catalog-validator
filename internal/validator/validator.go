@@ -30,8 +30,7 @@ import (
 // Engine validates catalogs. It is safe for concurrent use after construction.
 type Engine struct {
 	ctx     *cue.Context
-	schemas map[string]*schemaSet // canonical schema version -> compiled schema
-	aliases map[string]string     // document version string -> canonical schema version
+	schemas map[string]*schemaSet // schema version (the catalog's "version" value) -> compiled schema
 }
 
 // schemaSet holds the compiled CUE values for one schema version.
@@ -66,13 +65,6 @@ func New() (*Engine, error) {
 	e := &Engine{
 		ctx:     ctx,
 		schemas: map[string]*schemaSet{},
-		aliases: map[string]string{
-			defaultSchemaVersion: defaultSchemaVersion,
-			// Every example in draft-01 uses "version": "1". Accept it as an
-			// alias so real-world catalogs validate, while still recommending
-			// the "draft-XX" convention from MSF Section 5.1.1.
-			"1": defaultSchemaVersion,
-		},
 	}
 
 	ss, err := compileSchema(ctx, defaultSchemaVersion, schemas.Draft01)
@@ -175,10 +167,8 @@ func (e *Engine) resolveSchema(report *Report, forceVersion, docVersion string, 
 		// Delta updates carry no version of their own (MSF Section 5.3). If one
 		// is (wrongly) present and known, validate against it anyway; the
 		// forbidden-field rule is reported by the semantic checks.
-		if docVersion != "" {
-			if canonical, ok := e.aliases[docVersion]; ok {
-				return canonical, true
-			}
+		if _, known := e.schemas[docVersion]; known {
+			return docVersion, true
 		}
 		report.addInfo("", "MSF 5.3", "delta update has no version field; validating against %q", defaultSchemaVersion)
 		return defaultSchemaVersion, true
@@ -189,21 +179,18 @@ func (e *Engine) resolveSchema(report *Report, forceVersion, docVersion string, 
 		return "", false
 	}
 
-	canonical, ok := e.aliases[docVersion]
-	if !ok {
+	// The version must exactly match a known schema. The "draft-XX" convention
+	// (Section 5.1.1) is required; legacy values such as "1" are rejected.
+	if _, known := e.schemas[docVersion]; !known {
 		report.addError(fieldVersion, "MSF 5.1.1", "unsupported catalog version %q (supported: %s)", docVersion, e.knownVersions())
 		return "", false
 	}
-	if canonical != docVersion {
-		report.addInfo(fieldVersion, "MSF 5.1.1",
-			"version %q is treated as %q; the recommended form is the \"draft-XX\" convention", docVersion, canonical)
-	}
-	return canonical, true
+	return docVersion, true
 }
 
 func (e *Engine) knownVersions() string {
-	keys := make([]string, 0, len(e.aliases))
-	for k := range e.aliases {
+	keys := make([]string, 0, len(e.schemas))
+	for k := range e.schemas {
 		keys = append(keys, strconv.Quote(k))
 	}
 	return strings.Join(keys, ", ")
