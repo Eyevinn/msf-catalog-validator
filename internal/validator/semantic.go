@@ -22,6 +22,7 @@ var ruleSections = map[string]string{
 	"name":             "MSF 5.2.3",
 	"namespace":        "MSF 5.2.2",
 	"packaging":        "MSF 5.2.4",
+	"locmafVersion":    "LOCMAF",
 	"eventType":        "MSF 5.2.5",
 	"role":             "MSF 5.2.6",
 	"isLive":           "MSF 5.2.7",
@@ -82,7 +83,7 @@ var rootFields = map[string]bool{
 
 // trackFields is the set of recognized track-level fields (MSF + CMSF).
 var trackFields = map[string]bool{
-	"name": true, "namespace": true, "packaging": true, "role": true,
+	"name": true, "namespace": true, "packaging": true, "locmafVersion": true, "role": true,
 	"eventType": true, "isLive": true, "targetLatency": true, "buffers": true,
 	"label": true, "renderGroup": true, "altGroup": true, "initRef": true,
 	"depends": true, "temporalId": true, "spatialId": true, "codec": true,
