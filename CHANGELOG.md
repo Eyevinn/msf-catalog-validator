@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-05
+
 ### Added
 
 - `locmaf` packaging value and `locmafVersion` track field from LOCMAF
@@ -56,3 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `-version` flag and build-time version injection (via `internal.GetVersion`);
   the version and a link to the source repository are shown in the web UI. The
   schema-override flag is `-schema` (since `-version` now prints the version)
+
+[Unreleased]: https://github.com/Eyevinn/msf-catalog-validator/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Eyevinn/msf-catalog-validator/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/Eyevinn/msf-catalog-validator/releases/tag/v0.1.0
