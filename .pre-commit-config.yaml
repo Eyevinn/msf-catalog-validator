@@ -1,3 +1,7 @@
+# Hooks run at the pre-commit stage by default; commitlint opts in to commit-msg
+# below so the Go/whitespace hooks don't run a second time at commit-msg time.
+default_stages: [pre-commit]
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -17,4 +21,5 @@ repos:
     hooks:
       - id: commitlint
         stages: [commit-msg]
+        language_version: system
         additional_dependencies: ['@commitlint/config-conventional']
