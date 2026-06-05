@@ -46,7 +46,7 @@ venv:
 
 .PHONY: pre-commit-install
 pre-commit-install: venv
-	venv/bin/pre-commit install
+	venv/bin/pre-commit install --hook-type pre-commit --hook-type commit-msg
 
 .PHONY: pre-commit
 pre-commit: venv
