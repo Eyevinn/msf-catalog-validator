@@ -23,6 +23,9 @@ catalog's own `version` string, so multiple draft revisions can be supported
 side by side. Today the only supported version is **`draft-01`** (covering both
 MSF draft-01 and CMSF draft-01, which share a catalog format).
 
+A live instance of the web UI is available at
+<https://moqlivemock.demo.osaas.io/msf-catalog-validator/>.
+
 ## Install
 
 Install the CLI directly from GitHub with `go install`:
