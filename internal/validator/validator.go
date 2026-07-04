@@ -97,7 +97,7 @@ func compileSchema(ctx *cue.Context, version, src string) (*schemaSet, error) {
 			return nil, fmt.Errorf("looking up %s: %w", name, err)
 		}
 	}
-	ss.enumValues = buildEnumValues(ctx, v)
+	ss.enumValues = buildEnumValues(v)
 	return ss, nil
 }
 
@@ -105,7 +105,7 @@ func compileSchema(ctx *cue.Context, version, src string) (*schemaSet, error) {
 // the closed-disjunction fields whose violation otherwise produces a bare
 // "value is not permitted" error. Reading them from the schema keeps the
 // reported lists in sync with the constraints.
-func buildEnumValues(ctx *cue.Context, root cue.Value) map[string][]string {
+func buildEnumValues(root cue.Value) map[string][]string {
 	m := map[string][]string{}
 	add := func(leaf string, v cue.Value) {
 		if vals := disjunctStrings(v); len(vals) > 0 {
@@ -119,18 +119,13 @@ func buildEnumValues(ctx *cue.Context, root cue.Value) map[string][]string {
 	add("op", fieldByName(root.LookupPath(cue.ParsePath("#DeltaOp")), "op"))
 	add("scheme", fieldByName(root.LookupPath(cue.ParsePath("#ContentProtection")), "scheme"))
 	add("type", fieldByName(root.LookupPath(cue.ParsePath("#InitData")), "type"))
-	// locmafVersion is required only under "locmaf" packaging; fire that
-	// conditional by unifying #Track with a minimal locmaf stub.
-	stub := ctx.CompileString(`{name: "_", packaging: "locmaf", isLive: true, codec: "_"}`)
-	track := root.LookupPath(cue.ParsePath("#Track")).Unify(stub).Eval()
-	add("locmafVersion", fieldByName(track, "locmafVersion"))
 
 	return m
 }
 
 // disjunctStrings returns the concrete string members of v: the operands of a
 // string disjunction (a|b|c), or the single value of a concrete string (such as
-// type: "inline" or locmafVersion: "0.2"). It returns nil for anything else.
+// type: "inline"). It returns nil for anything else.
 func disjunctStrings(v cue.Value) []string {
 	if !v.Exists() {
 		return nil

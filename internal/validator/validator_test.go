@@ -109,8 +109,6 @@ func TestEnumMessagesListAllowedValues(t *testing.T) {
 	}{
 		{"../../examples/invalid.json", "tracks[1].packaging",
 			[]string{lead, `"loc"`, `"cmaf"`, `"locmaf"`}},
-		{"../../testdata/invalid/locmaf_bad_version.json", "tracks[1].locmafVersion",
-			[]string{lead, `"0.2"`}},
 		{"../../testdata/invalid/delta_with_version.json", "deltaUpdate[0].op",
 			[]string{lead, `"add"`, `"remove"`, `"clone"`}},
 	}

@@ -160,10 +160,10 @@ import "list"
 	// required for declared tracks.
 	packaging?: #Packaging
 
-	// LOCMAF wire-format version, a track-level field defined by [LOCMAF]
-	// (draft-einarsson-moq-locmaf). Required for "locmaf" packaging and, for
-	// now, fixed to "0.2" (the only version this validator knows); see the
-	// conditional rule below.
+	// LOCMAF packaging version, a track-level field defined by [LOCMAF]
+	// (draft-einarsson-moq-locmaf). Required for "locmaf" packaging and
+	// constrained to the "x.y" form (e.g. "0.3"); see the conditional rule
+	// below.
 	locmafVersion?: string
 
 	// Section 5.2.6 - track role. Optional; known roles are documented below
@@ -289,10 +289,10 @@ import "list"
 		codec!:  string
 	}
 
-	// LOCMAF tracks MUST carry locmafVersion; only "0.2" is supported for now.
+	// LOCMAF tracks MUST carry locmafVersion, in "x.y" form (e.g. "0.3").
 	// ([LOCMAF] draft-einarsson-moq-locmaf.)
 	if _pkg == "locmaf" {
-		locmafVersion!: "0.2"
+		locmafVersion!: string & =~"^[0-9]+\\.[0-9]+$"
 	}
 
 	// Audio tracks MUST carry codec, samplerate, channelConfig and bitrate.
