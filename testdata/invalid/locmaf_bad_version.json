@@ -14,7 +14,7 @@
     {
       "name": "audio_locmaf_wrongver",
       "packaging": "locmaf",
-      "locmafVersion": "0.3",
+      "locmafVersion": "3",
       "isLive": true,
       "role": "audio",
       "codec": "mp4a.40.2",

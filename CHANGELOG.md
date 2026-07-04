@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `locmafVersion` on `locmaf` tracks must now be of the form `x.y` (e.g.
+  `"0.3"`); values that don't match this form are rejected
+
 ## [0.2.0] - 2026-06-05
 
 ### Added
