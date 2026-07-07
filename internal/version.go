@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	commitVersion = "0.2.0"      // Should be updated during build (see Makefile LDFLAGS)
-	commitDate    = "1780653600" // commitDate in Epoch seconds (updated during build)
+	commitVersion = "0.3.0"      // Should be updated during build (see Makefile LDFLAGS)
+	commitDate    = "1783409478" // commitDate in Epoch seconds (updated during build)
 )
 
 // GetVersion returns the version and, when available, the commit date.
