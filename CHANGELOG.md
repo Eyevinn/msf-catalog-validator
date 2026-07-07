@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-07
+
 ### Changed
 
 - `locmafVersion` on `locmaf` tracks must now be of the form `x.y` (e.g.
@@ -64,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the version and a link to the source repository are shown in the web UI. The
   schema-override flag is `-schema` (since `-version` now prints the version)
 
-[Unreleased]: https://github.com/Eyevinn/msf-catalog-validator/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Eyevinn/msf-catalog-validator/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/Eyevinn/msf-catalog-validator/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Eyevinn/msf-catalog-validator/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Eyevinn/msf-catalog-validator/releases/tag/v0.1.0
