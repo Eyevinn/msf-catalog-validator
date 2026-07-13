@@ -2,7 +2,6 @@
 [![golangci-lint](https://github.com/Eyevinn/msf-catalog-validator/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/Eyevinn/msf-catalog-validator/actions/workflows/golangci-lint.yml)
 [![Coverage Status](https://coveralls.io/repos/github/Eyevinn/msf-catalog-validator/badge.svg?branch=main)](https://coveralls.io/github/Eyevinn/msf-catalog-validator?branch=main)
 [![GoDoc](https://godoc.org/github.com/Eyevinn/msf-catalog-validator?status.svg)](http://godoc.org/github.com/Eyevinn/msf-catalog-validator)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Eyevinn/msf-catalog-validator)](https://goreportcard.com/report/github.com/Eyevinn/msf-catalog-validator)
 [![license](https://img.shields.io/github/license/Eyevinn/msf-catalog-validator.svg)](https://github.com/Eyevinn/msf-catalog-validator/blob/main/LICENSE)
 
 # msf-catalog-validator
